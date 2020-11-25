@@ -17,8 +17,6 @@ const statuses = {
   stopped: { label: "Saved" },
 };
 
-const hasSavedRecording = (blob) => typeof blob === "string";
-
 const App = () => {
   const {
     status,
@@ -27,10 +25,9 @@ const App = () => {
     mediaBlobUrl,
   } = useReactMediaRecorder({ audio: true });
   const [colorMode, setColorMode] = useColorMode();
+  const hasSavedRecording = typeof mediaBlobUrl === "string";
 
-  useEffect(() =>
-    setColorMode(hasSavedRecording(mediaBlobUrl) ? "default" : "dark")
-  );
+  useEffect(() => setColorMode(hasSavedRecording ? "default" : "dark"));
 
   return (
     <Flex
@@ -44,6 +41,7 @@ const App = () => {
       }}
     >
       <Text>{statuses[status].label}</Text>
+      {hasSavedRecording && <audio src={mediaBlobUrl} autoPlay />}
     </Flex>
   );
 };
