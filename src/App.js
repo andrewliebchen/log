@@ -1,6 +1,7 @@
 import { Flex, Text, useColorMode } from "theme-ui";
-import { useReactMediaRecorder } from "react-media-recorder";
 import { useEffect } from "react";
+import { useReactMediaRecorder } from "react-media-recorder";
+import useSimpleAudio from "use-simple-audio";
 
 const statuses = {
   media_aborted: { label: "Media aborted" },
@@ -26,13 +27,14 @@ const App = () => {
   } = useReactMediaRecorder({ audio: true });
   const [colorMode, setColorMode] = useColorMode();
   const hasSavedRecording = typeof mediaBlobUrl === "string";
+  const { play, pause, stop } = useSimpleAudio(mediaBlobUrl, true);
 
   useEffect(() => setColorMode(hasSavedRecording ? "default" : "dark"));
 
   return (
     <Flex
-      onMouseDown={startRecording}
-      onMouseUp={stopRecording}
+      onMouseDown={hasSavedRecording ? play : startRecording}
+      onMouseUp={hasSavedRecording ? pause : stopRecording}
       sx={{
         alignItems: "center",
         justifyContent: "center",
@@ -40,8 +42,7 @@ const App = () => {
         width: "100vw",
       }}
     >
-      <Text>{statuses[status].label}</Text>
-      {hasSavedRecording && <audio src={mediaBlobUrl} autoPlay />}
+      <Text>{hasSavedRecording ? "Hold to play" : statuses[status].label}</Text>
     </Flex>
   );
 };
