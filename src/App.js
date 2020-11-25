@@ -1,5 +1,6 @@
-import { Flex, Text } from "theme-ui";
+import { Flex, Text, useColorMode } from "theme-ui";
 import { useReactMediaRecorder } from "react-media-recorder";
+import { useEffect } from "react";
 
 const statuses = {
   media_aborted: { label: "Media aborted" },
@@ -16,6 +17,8 @@ const statuses = {
   stopped: { label: "Saved" },
 };
 
+const hasSavedRecording = (blob) => typeof blob === "string";
+
 const App = () => {
   const {
     status,
@@ -23,6 +26,11 @@ const App = () => {
     stopRecording,
     mediaBlobUrl,
   } = useReactMediaRecorder({ audio: true });
+  const [colorMode, setColorMode] = useColorMode();
+
+  useEffect(() =>
+    setColorMode(hasSavedRecording(mediaBlobUrl) ? "default" : "dark")
+  );
 
   return (
     <Flex
